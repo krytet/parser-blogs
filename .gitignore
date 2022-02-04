@@ -1,0 +1,4 @@
+*.pdf
+*.csv
+venv/
+venv
