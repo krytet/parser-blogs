@@ -1,4 +1,4 @@
 *.pdf
-*.csv
 venv/
 venv
+parser.py
