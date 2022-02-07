@@ -10,6 +10,7 @@ authors_set_list = set()
 authors = []
 start_time = time.time()
 tasks = []
+tags_all = {}
 
 
 async def add_authors(session, url, name):
@@ -52,6 +53,14 @@ async def add_posts(items, session):
                 'name': tag.text,
                 'url': tag['href']
             })
+            try:
+                tags_all[tag.text]['count'] += 1
+            except KeyError:
+                tags_all[tag.text] = {
+                    'name': tag.text,
+                    'url': tag['href'],
+                    'count': 1
+                }
 
         # Объединение результатов
         result.append({
@@ -99,11 +108,18 @@ def main():
     # Выгрузка пользователей (авторов)
     with open('users.csv', mode='w', encoding='utf-8') as w_file:
         file_writer = csv.writer(w_file, delimiter=";", lineterminator="\r")
-        file_writer.writerow(['name', 'born_date', 'born_location',
+        file_writer.writerow(['name', 'url', 'born_date', 'born_location',
                               'description'])
         for a in authors:
-            file_writer.writerow([a['name'], a['born_date'],
+            file_writer.writerow([a['name'], a['url'], a['born_date'],
                                   a['born_location'], a['description']])
+
+    # Выгрузка тегов
+    with open('tags.csv', mode='w', encoding='utf-8') as w_file:
+        file_writer = csv.writer(w_file, delimiter=";", lineterminator="\r")
+        file_writer.writerow(['name', 'url', 'count_post'])
+        for tag in tags_all.values():
+            file_writer.writerow([tag['name'], tag['url'], tag['count']])
 
 
 if __name__ == "__main__":
